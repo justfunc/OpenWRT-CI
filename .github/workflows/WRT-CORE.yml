@@ -226,30 +226,28 @@ jobs:
             make clean -j$(nproc)
           fi
 
-      - name: Release Firmware
-        uses: softprops/action-gh-release@master
+      - name: 上传编译产物
+        if: success()
+        uses: actions/upload-artifact@main
+        continue-on-error: true
         with:
-          tag_name: ${{env.WRT_CONFIG}}-${{env.WRT_INFO}}-${{env.WRT_BRANCH}}-${{env.WRT_DATE}}
-          files: ./wrt/upload/*.*
-          body: |
-            这是个平台固件包，内含多个设备！
-            请注意选择你需要的设备固件！
-            不要问，刷就完事了！
+          name: ${{env.WRT_CONFIG}}-${{env.WRT_INFO}}-${{env.WRT_BRANCH}}-${{env.WRT_DATE}}
+          path: |
+            ./wrt/upload/*.*
+          retention-days: 15
+          if-no-files-found: warn
+          compression-level: 9
 
-            全系带开源硬件加速，别问了！
-
-            源码：${{env.WRT_REPO}}
-            分支：${{env.WRT_BRANCH}}
-            提交：${{env.WRT_HASH}}
-
-            配置：${{env.WRT_CONFIG}}
-            平台：${{env.WRT_TARGET}}
-
-            登录地址：${{env.WRT_IP}}
-            登录密码：${{env.WRT_PW}}
-
-            WIFI名称：${{env.WRT_SSID}}
-            WIFI密码：${{env.WRT_WORD}}
-
-            内核版本：${{env.WRT_KVER}}
-            插件列表：${{env.WRT_LIST}}
+      - name: 生成构建摘要
+        if: success()
+        run: |
+          echo "## 构建结果" >> $GITHUB_STEP_SUMMARY
+          echo "- 源码：${{env.WRT_REPO}}" >> $GITHUB_STEP_SUMMARY
+          echo "- 分支：${{env.WRT_BRANCH}}" >> $GITHUB_STEP_SUMMARY
+          echo "- 提交：${{env.WRT_HASH}}" >> $GITHUB_STEP_SUMMARY
+          echo "- 配置：${{env.WRT_CONFIG}}" >> $GITHUB_STEP_SUMMARY
+          echo "- 平台：${{env.WRT_TARGET}}" >> $GITHUB_STEP_SUMMARY
+          echo "- 登录地址：${{env.WRT_IP}}" >> $GITHUB_STEP_SUMMARY
+          echo "- 登录密码：${{env.WRT_PW}}" >> $GITHUB_STEP_SUMMARY
+          echo "- WIFI名称：${{env.WRT_SSID}}" >> $GITHUB_STEP_SUMMARY
+          echo "- WIFI密码：${{env.WRT_WORD}}" >> $GITHUB_STEP_SUMMARY
