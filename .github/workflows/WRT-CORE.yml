@@ -204,6 +204,12 @@ jobs:
           echo "======================="
           du -h --max-depth=1
           echo "======================="
+          
+      - name: SSH 连接（编译失败）
+        uses: mxschmitt/action-tmate@v3.23
+        if: failure()
+        with:
+          limit-access-to-actor: true
 
       - name: Package Firmware
         run: |
