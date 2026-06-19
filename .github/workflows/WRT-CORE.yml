@@ -208,7 +208,7 @@ jobs:
       - name: SSH 连接（编译失败）
         uses: mxschmitt/action-tmate@v3.23
         if: failure()
-        timeout-minutes: 15
+        timeout-minutes: 30
         with:
           limit-access-to-actor: true
 
